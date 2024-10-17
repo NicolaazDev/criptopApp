@@ -148,7 +148,7 @@ export default function MainPage() {
     setExpired(false);
     addToBalance(randomValue); // Adiciona o valor gerado ao saldo
 
-    router.replace("/sacar");
+   // router.replace("/sacar");
 
     // setExpired(false);
   };
