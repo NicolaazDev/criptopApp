@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className="font-poppinsLight center overflow-hidden">
+      <body className="font-poppinsLight center">
         <BalanceProvider>{children}</BalanceProvider>
       </body>
     </html>
