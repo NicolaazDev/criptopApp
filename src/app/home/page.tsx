@@ -142,11 +142,19 @@ export default function MainPage() {
     return (Math.random() * (max - min) + min).toFixed(8); // Retorna um valor fixo em 8 casas decimais
   };
 
+  const { seconds, minutes, hours, isRunning, start, pause, restart } =
+    useTimer();
+
   const handleMineBitcoin = () => {
     const randomValue = parseFloat(getRandomValue(0.0000009, 0.0000015));
     setCurrentStep(currentStep + 1);
     setExpired(false);
     addToBalance(randomValue); // Adiciona o valor gerado ao saldo
+
+    const time = new Date();
+    const novoExpiryTimestamp = new Date(time.getTime() + data.minutes * 60 * 1000);
+
+    restart(novoExpiryTimestamp);
 
    // router.replace("/sacar");
 
@@ -199,10 +207,6 @@ export default function MainPage() {
         </div>
         <AnimatedGrid />
 
-        <Carousel />
-
-        <Steps />
-
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -215,6 +219,12 @@ export default function MainPage() {
         >
           <span className="font-poppinsRegular">Minerar bitcoin</span>
         </motion.button>
+
+        <Carousel />
+
+        <Steps />
+
+        
       </div>
     </main>
   );
