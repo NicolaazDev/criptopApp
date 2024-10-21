@@ -225,7 +225,7 @@ export default function MainPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0 }}
-                className="center text-xl font-poppinsLight space-x-2 fixed top-0 !translate-y-[-400%] scale-110 right-4"
+                className="center text-xl font-poppinsLight space-x-2 fixed top-0 !translate-y-[-300%] scale-110 right-4"
               >
                 <BitcoinConverter />
               </motion.span>
