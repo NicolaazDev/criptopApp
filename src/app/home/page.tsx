@@ -155,14 +155,7 @@ export default function MainPage() {
     return (Math.random() * (max - min) + min).toFixed(8); // Retorna um valor fixo em 8 casas decimais
   };
 
-<<<<<<< HEAD
   const handleMineBitcoin = async () => {
-=======
-  const { seconds, minutes, hours, isRunning, start, pause, restart } =
-    useTimer();
-
-  const handleMineBitcoin = () => {
->>>>>>> 1a8e63224a1d15a5f5091f6f3ae03692b8835e14
     const randomValue = parseFloat(getRandomValue(0.0000009, 0.0000015));
     setCurrentStep(currentStep + 1);
     setExpired(false);
@@ -170,16 +163,9 @@ export default function MainPage() {
     await updateDocument(1);
     setExpired(true);
 
-<<<<<<< HEAD
     // router.replace("/sacar");
-=======
-    const time = new Date();
-    const novoExpiryTimestamp = new Date(time.getTime() + data.minutes * 60 * 1000);
 
-    restart(novoExpiryTimestamp);
-
-   // router.replace("/sacar");
->>>>>>> 1a8e63224a1d15a5f5091f6f3ae03692b8835e14
+    // router.replace("/sacar");
 
     // setExpired(false);
   };
@@ -246,8 +232,6 @@ export default function MainPage() {
         <Carousel />
 
         <Steps />
-
-        
       </div>
     </main>
   );
