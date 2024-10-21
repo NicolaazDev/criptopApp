@@ -16,7 +16,7 @@ import CountUp from "react-countup";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { db } from "@/services/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 
 import { useTimer } from "react-timer-hook";
 import { MdPix } from "react-icons/md";
@@ -138,17 +138,32 @@ export default function MainPage() {
 
   const router = useRouter();
 
+  const updateDocument = async (newMinutes: any) => {
+    const balanceRef = doc(db, "cripto", "dados");
+
+    try {
+      await updateDoc(balanceRef, {
+        minutes: newMinutes, // Novo valor para o campo 'minutes'
+      });
+      console.log("Documento atualizado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar o documento: ", error);
+    }
+  };
+
   const getRandomValue = (min: number, max: number) => {
     return (Math.random() * (max - min) + min).toFixed(8); // Retorna um valor fixo em 8 casas decimais
   };
 
-  const handleMineBitcoin = () => {
+  const handleMineBitcoin = async () => {
     const randomValue = parseFloat(getRandomValue(0.0000009, 0.0000015));
     setCurrentStep(currentStep + 1);
     setExpired(false);
-    addToBalance(randomValue); // Adiciona o valor gerado ao saldo
+    await addToBalance(randomValue); // Adiciona o valor gerado ao saldo
+    await updateDocument(1);
+    setExpired(true);
 
-    router.replace("/sacar");
+    // router.replace("/sacar");
 
     // setExpired(false);
   };
