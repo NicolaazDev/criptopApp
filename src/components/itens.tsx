@@ -10,7 +10,7 @@ const cryptocurrencies = [
   {
     name: "Bitcoin",
     symbol: "BTC",
-    price: "60,000",
+    price: "67.716,10",
     icon: <Bitcoin size={32} />, // Substitua pelos URLs reais dos ícones
     chart:
       "https://res.cloudinary.com/do9d7j6b3/image/upload/v1729029442/magicpattern-svg-chart-1729029390301_lozcur.png", // Substitua pelos URLs reais dos gráficos
@@ -18,7 +18,7 @@ const cryptocurrencies = [
   {
     name: "Ethereum",
     symbol: "ETH",
-    price: "4,000",
+    price: "2.677,00",
     icon: <FaEthereum size={32} />,
     chart:
       "https://res.cloudinary.com/do9d7j6b3/image/upload/v1729029440/magicpattern-svg-chart-1729029393375_rxdjjb.png", // Substitua pelos URLs reais dos gráficos
@@ -26,7 +26,7 @@ const cryptocurrencies = [
   {
     name: "Litecoin",
     symbol: "LTC",
-    price: "200",
+    price: "70,80",
     icon: <SiLitecoin size={32} />, // Substitua pelos URLs reais dos ícones
     chart:
       "https://res.cloudinary.com/do9d7j6b3/image/upload/v1729029444/magicpattern-svg-chart-1729029357314_jetqps.png", // Substitua pelos URLs reais dos gráficos

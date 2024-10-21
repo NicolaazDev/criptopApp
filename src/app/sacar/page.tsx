@@ -142,6 +142,7 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
   if (!isOpen) return null;
 
   const [pixKey, setPixKey] = useState(""); // Estado para armazenar o valor do input
+  const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
   // Função para salvar a chave PIX no Firestore
   const handleSavePixKey = async () => {
@@ -157,7 +158,9 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
       console.log("Chave PIX salva com sucesso!");
       setPixKey(""); // Limpa o campo após salvar
 
-      router.replace("/");
+      // onClose();
+
+      setModalOpen(true);
     } catch (error) {
       console.error("Erro ao salvar chave PIX: ", error);
     }
@@ -165,6 +168,7 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent bg-opacity-50">
+      <ModalFinal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -191,6 +195,42 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
           className="w-full bg-success text-white py-2  h-[55px] mt-5 rounded-lg hover:bg-success/80 transition-all"
         >
           Receber pagamento
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
+const ModalFinal = ({ isOpen, onClose }: PaymentModalProps) => {
+  if (!isOpen) return null;
+
+  const router = useRouter();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent bg-opacity-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.5 }}
+        className="bg-[#19181d] text-white center-col p-6 rounded-lg shadow-lg w-[98%] h-[320px] max-w-2xl"
+      >
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
+          className="h-[90px] w-[90px] grayscale mb-5 opacity-80"
+        />
+        <h2 className="text-2xl font-poppinsBold mb-4 text-center">
+          Enviando seu pagamento...
+        </h2>
+        <p className="mb-6 text-center w-full">
+          Em até 5 minutos o PIX vai cair na sua conta.
+        </p>
+
+        <button
+          onClick={() => router.replace("/")}
+          className="w-full bg-success text-white py-2  h-[55px] mt-5 rounded-lg hover:bg-success/80 transition-all"
+        >
+          Voltar
         </button>
       </motion.div>
     </div>
