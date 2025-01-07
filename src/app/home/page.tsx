@@ -138,7 +138,7 @@ const CountdownTimer = () => {
             onComplete={() => setExpired(true)}
             ref={contdownRef}
             autoStart={start}
-            date={Date.now() + 60000 / 3}
+            date={Date.now() + 60000 * 3}
           />
         </div>
       </div>
