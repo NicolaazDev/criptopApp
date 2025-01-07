@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 import { db } from "@/services/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import { start } from "repl";
 
 // Context
 const BalanceContext = createContext({
@@ -16,6 +17,8 @@ const BalanceContext = createContext({
   setExpired: (isExpired: boolean) => {},
   currentStep: 0, // Estado para os steps
   setCurrentStep: (step: number) => {},
+  start: false,
+  setStart: (start: boolean) => {},
 });
 
 // Provider
@@ -24,8 +27,9 @@ export const BalanceProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [balance, setBalance] = useState<number>(0.00023488);
+  const [balance, setBalance] = useState<number>(0.0000088);
   const [expired, setExpired] = useState(false);
+  const [start, setStart] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
   const [expiryTimestamp, setExpiryTimestamp] = useState<any>();
@@ -85,6 +89,8 @@ export const BalanceProvider = ({
         setExpired,
         currentStep,
         setCurrentStep,
+        start,
+        setStart,
       }}
     >
       {children}

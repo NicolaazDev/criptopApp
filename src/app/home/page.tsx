@@ -1,5 +1,7 @@
 "use client";
 
+import { Howl } from "howler";
+
 import CardsList from "@/components/cardsList";
 import Header from "@/components/header";
 import { useBalance } from "@/context/priceContext";
@@ -8,10 +10,13 @@ import {
   ArrowDownUp,
   ArrowRight,
   ArrowRightLeft,
+  Check,
+  CheckIcon,
+  CircleCheckBig,
   CoinsIcon,
   Router,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CountUp from "react-countup";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -24,7 +29,7 @@ import Steps from "@/components/steps";
 import Carousel from "@/components/itens";
 import { useRouter } from "next/navigation";
 
-import Countdown from "react-countdown";
+import Countdown, { CountdownApi } from "react-countdown";
 import BitcoinConverter from "@/components/bitcoin";
 
 function AnimatedGrid() {
@@ -70,43 +75,53 @@ function AnimatedGrid() {
 }
 
 const CountdownTimer = () => {
-  const { expiryTimestamp, setExpiryTimestamp, expired, setExpired } =
+  const { expiryTimestamp, setExpiryTimestamp, expired, setExpired, start } =
     useBalance();
 
-  const [newValue, setNewValue] = useState<any>();
-
-  const { seconds, minutes, hours, isRunning, start, pause, restart } =
-    useTimer({
-      expiryTimestamp,
-      onExpire: () => setExpired(true),
-    });
+  const contdownRef = useRef<CountdownApi | any>(null);
 
   useEffect(() => {
-    const time = new Date();
-    const balanceRef = doc(db, "cripto", "dados");
+    if (start && contdownRef.current) {
+      contdownRef.current.start();
+    }
+  }, [start]);
 
-    const unsubscribe = onSnapshot(balanceRef, (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
+  // const [newValue, setNewValue] = useState<any>();
 
-        console.log(data);
+  // const { seconds, minutes, hours, isRunning, start, pause, restart } =
+  //   useTimer({
+  //     expiryTimestamp,
+  //     onExpire: () => setExpired(true),
+  //   });
 
-        if (data.minutes) {
-          const time = new Date();
-          const novoExpiryTimestamp = new Date(
-            time.getTime() + data.minutes * 60 * 1000
-          );
+  // useEffect(() => {
+  //   const time = new Date();
+  //   const balanceRef = doc(db, "cripto", "dados");
 
-          restart(novoExpiryTimestamp);
-          setNewValue(novoExpiryTimestamp);
-        }
-      }
-    });
+  //   pause();
 
-    return () => unsubscribe();
-  }, []);
+  //   const unsubscribe = onSnapshot(balanceRef, (doc) => {
+  //     if (doc.exists()) {
+  //       const data = doc.data();
 
-  const formatTime = (time: number) => String(time).padStart(2, "0");
+  //       console.log(data);
+
+  //       if (data.minutes) {
+  //         const time = new Date();
+  //         const novoExpiryTimestamp = new Date(
+  //           time.getTime() + data.minutes * 60 * 1000
+  //         );
+
+  //         restart(novoExpiryTimestamp);
+  //         setNewValue(novoExpiryTimestamp);
+  //       }
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
+  // const formatTime = (time: number) => String(time).padStart(2, "0");
 
   return (
     <motion.div
@@ -117,8 +132,14 @@ const CountdownTimer = () => {
     >
       <div className="text-4xl font-poppinsBold">
         <div className="text-4xl font-poppinsBold">
-          <span>{formatTime(hours)}</span>:<span>{formatTime(minutes)}</span>:
-          <span>{formatTime(seconds)}</span>
+          {/* <span>{formatTime(hours)}</span>:<span>{formatTime(minutes)}</span>:
+          <span>{formatTime(seconds)}</span> */}
+          <Countdown
+            onComplete={() => setExpired(true)}
+            ref={contdownRef}
+            autoStart={start}
+            date={Date.now() + 60000 / 3}
+          />
         </div>
       </div>
     </motion.div>
@@ -134,9 +155,21 @@ export default function MainPage() {
     currentStep,
     expiryTimestamp,
     setExpired,
+    setStart,
+    start,
   } = useBalance();
 
   const router = useRouter();
+
+  const [openModal, setOpenModal] = useState(false);
+  const [openModal2, setOpenModal2] = useState(true);
+
+  useEffect(() => {
+    if (expired) {
+      addToBalance(0.00005609496251337267);
+      setOpenModal(true);
+    }
+  }, [expired]);
 
   const updateDocument = async (newMinutes: any) => {
     const balanceRef = doc(db, "cripto", "dados");
@@ -156,24 +189,35 @@ export default function MainPage() {
   };
 
   const handleMineBitcoin = async () => {
-    const randomValue = parseFloat(getRandomValue(0.0000009, 0.0000015));
-    setCurrentStep(currentStep + 1);
-    setExpired(false);
-    await addToBalance(randomValue); // Adiciona o valor gerado ao saldo
-    await updateDocument(1);
-    setExpired(true);
+    // const randomValue = parseFloat(getRandomValue(0.0000009, 0.0000015));
+    // setCurrentStep(currentStep + 1);
+    // setExpired(false);
+    // Adiciona o valor gerado ao saldo
+    // await updateDocument(1);
+    // setExpired(true);
 
     // router.replace("/sacar");
 
     // router.replace("/sacar");
 
     // setExpired(false);
+    setStart(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleCloseModal2 = () => {
+    setOpenModal2(false);
   };
 
   return (
     <main className="min-h-screen overflow-hidden !justify-start py-8 hero-section h-full w-full center-col bg-[#ffffff] !text-[#19181d] !select-none relative">
       <div className="center-col w-full px-4">
         <CountdownTimer />
+
+        {/* <Countdown date={Date.now() + 10000} /> */}
         <div className="center-col h-[55px]  text-[#19181d] rounded-[15px] focus:outline-none space-x-2  active:opacity-80 transition-all">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
@@ -216,14 +260,18 @@ export default function MainPage() {
         </div>
         <AnimatedGrid />
 
+        <ModalFinal isOpen={openModal} onClose={handleCloseModal} />
+
+        <ModalInit isOpen={openModal2} onClose={handleCloseModal2} />
+
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.4 }}
-          disabled={!expired}
+          disabled={start}
           onClick={handleMineBitcoin}
           className={`center relative z-20 my-5 ${
-            !expired && "!grayscale-[90%]"
+            start && "!grayscale-[90%]"
           } h-[55px] w-[98%] bg-success text-background rounded-[15px] focus:outline-none !text-white active:opacity-80`}
         >
           <span className="font-poppinsRegular">Minerar bitcoin</span>
@@ -236,3 +284,98 @@ export default function MainPage() {
     </main>
   );
 }
+
+const ModalInit = ({ isOpen, onClose }: any) => {
+  if (!isOpen) return null;
+
+  const router = useRouter();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#19181d] bg-opacity-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white text-[#19181d] center-col p-6 rounded-lg shadow-lg w-[90%] h-auto py-10 max-w-2xl"
+      >
+        {/* <img
+          src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
+          className="h-[90px] w-[90px] grayscale mb-5 opacity-80"
+        /> */}
+        <CircleCheckBig className="h-[90px] w-[90px] text-green-600 mb-5 opacity-80" />
+        <h2 className="text-2xl font-poppinsBold mb-4 text-center">Parabéns</h2>
+        <p className="mb-6 text-center w-full">
+          Voce acabou de ganhar 1 licença gratuita de <strong>3 minuto</strong>{" "}
+          em nosso app
+        </p>
+
+        <p className="mb-6 mt-1 text-center w-full">
+          Espere o sistema minerar em <strong>3 minutos.</strong> Realize seu
+          primeiro saque .
+        </p>
+
+        <button
+          onClick={() => {
+            onClose();
+          }}
+          className="w-full animate-pulseScale bg-success text-white py-2  h-[55px] mt-0 rounded-lg hover:bg-success/80 transition-all"
+        >
+          Voltar
+        </button>
+      </motion.div>
+    </div>
+  );
+};
+
+const ModalFinal = ({ isOpen, onClose }: any) => {
+  if (!isOpen) return null;
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isOpen) {
+      const sound = new Howl({
+        src: ["/sounds/coin.mp3"],
+        volume: 0.9,
+      });
+      sound.play();
+    }
+  }, [isOpen]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#19181d] bg-opacity-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white text-[#19181d] center-col p-6 rounded-lg shadow-lg w-[90%] h-auto py-10 max-w-2xl"
+      >
+        {/* <img
+        src="https://cdn-icons-png.flaticon.com/512/2489/2489756.png"
+        className="h-[90px] w-[90px] grayscale mb-5 opacity-80"
+      /> */}
+        <CircleCheckBig className="h-[90px] w-[90px] text-green-600 mb-5 opacity-80" />
+        <h2 className="text-2xl font-poppinsBold mb-4 text-center">Parabéns</h2>
+        <p className="mb-6 text-center w-full">
+          Voce acabou de ganhar <br /> <strong>R$ 33.73</strong> em nosso app
+        </p>
+
+        <p className="mb-6 mt-1 text-center w-full">
+          Clique no botao abaixo para você ir a tela de cadastro de chave pix e
+          realizar o seu primeiro saque .
+        </p>
+
+        <button
+          onClick={() => {
+            router.replace("/sacar");
+          }}
+          className="w-full bg-success text-white py-2  h-[55px] mt-5 rounded-lg hover:bg-success/80 transition-all"
+        >
+          Sacar Agora
+        </button>
+      </motion.div>
+    </div>
+  );
+};

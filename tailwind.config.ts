@@ -31,6 +31,15 @@ const config: Config = {
         poppinsExtrabold: ["poppins-extrabold"],
         poppinsBlack: ["poppins-black"],
       },
+      keyframes: {
+        pulseScale: {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(1.1)", opacity: "0.9" },
+        },
+      },
+      animation: {
+        pulseScale: "pulseScale 1.5s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

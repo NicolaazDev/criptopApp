@@ -2,7 +2,7 @@ import { useBalance } from "@/context/priceContext";
 import React, { useState, useEffect } from "react";
 
 // Preço fixo do Bitcoin em reais
-const BITCOIN_PRICE_BRL = 384377; // Atualize o preço conforme necessário
+const BITCOIN_PRICE_BRL = 601899; // Atualize o preço conforme necessário
 
 const BitcoinConverter = () => {
   const [realAmount, setRealAmount] = useState(0);
